@@ -5,8 +5,8 @@ import "./globals.css";
 import { Providers } from "./providers";
 
 export const metadata: Metadata = {
-  title: "VAT Report Analyzer Rwanda",
-  description: "Automated VAT analysis from Rwanda EBM Sales and Purchase reports",
+  title: "Business Reports - A&T Consultants Ltd",
+  description: "Automated Business reports analysis from Rwanda EBM Sales and Purchase reports",
 };
 
 export default function RootLayout({ children }: { children: ReactNode }) {

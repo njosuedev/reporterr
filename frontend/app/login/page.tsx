@@ -50,8 +50,8 @@ function LoginForm() {
             <Receipt className="h-7 w-7" />
           </span>
           <div>
-            <h1 className="text-xl font-bold text-foreground">Reporterr Generator</h1>
-            <p className="text-sm text-muted-foreground">Rwanda EBM VAT Reports</p>
+            <h1 className="text-xl font-bold text-foreground">Reports Generator</h1>
+            <p className="text-sm text-muted-foreground">Business Reports - A&T Consultants Ltd</p>
           </div>
         </div>
 
@@ -72,7 +72,7 @@ function LoginForm() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   className="pl-9"
-                  placeholder="you@company.rw"
+                  placeholder="admin email address"
                 />
               </div>
             </div>
@@ -97,7 +97,7 @@ function LoginForm() {
             <Button type="submit" className="w-full" disabled={isSubmitting}>
               {isSubmitting ? (
                 <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Signing in...
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" /> connect...
                 </>
               ) : (
                 "Sign in"
