@@ -27,10 +27,26 @@ function hasAllowedExtension(file: File): boolean {
   return ALLOWED_EXTENSIONS.some((ext) => name.endsWith(ext));
 }
 
-function validateReportFile(file: File): string | null {
+type FileKind = "sales" | "purchase";
+
+function detectFileKindMismatch(kind: FileKind, file: File): string | null {
+  const name = file.name.toLowerCase();
+  const looksLikeSales = /\bsale/.test(name);
+  const looksLikePurchase = /\bpurchase/.test(name);
+
+  if (kind === "sales" && looksLikePurchase && !looksLikeSales) {
+    return "This looks like the Purchase file — check you selected the Sales file";
+  }
+  if (kind === "purchase" && looksLikeSales && !looksLikePurchase) {
+    return "This looks like the Sales file — check you selected the Purchase file";
+  }
+  return null;
+}
+
+function validateReportFile(kind: FileKind, file: File): string | null {
   if (!hasAllowedExtension(file)) return "Must be an .xlsx or .xls file";
   if (file.size === 0) return "File is empty";
-  return null;
+  return detectFileKindMismatch(kind, file);
 }
 
 function downloadPdf(pdfBase64: string, filename: string) {
@@ -197,12 +213,12 @@ export default function Home() {
 
   const handleSalesFileChange = (file: File | null) => {
     setSalesFile(file);
-    setSalesFileError(file ? validateReportFile(file) : null);
+    setSalesFileError(file ? validateReportFile("sales", file) : null);
   };
 
   const handlePurchaseFileChange = (file: File | null) => {
     setPurchaseFile(file);
-    setPurchaseFileError(file ? validateReportFile(file) : null);
+    setPurchaseFileError(file ? validateReportFile("purchase", file) : null);
   };
 
   const {
