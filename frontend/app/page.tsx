@@ -27,6 +27,12 @@ function hasAllowedExtension(file: File): boolean {
   return ALLOWED_EXTENSIONS.some((ext) => name.endsWith(ext));
 }
 
+function validateReportFile(file: File): string | null {
+  if (!hasAllowedExtension(file)) return "Must be an .xlsx or .xls file";
+  if (file.size === 0) return "File is empty";
+  return null;
+}
+
 function downloadPdf(pdfBase64: string, filename: string) {
   const byteChars = atob(pdfBase64);
   const byteNumbers = new Array(byteChars.length);
@@ -45,17 +51,25 @@ function downloadPdf(pdfBase64: string, filename: string) {
 function FileField({
   label,
   file,
+  error,
   onChange,
 }: {
   label: string;
   file: File | null;
+  error?: string | null;
   onChange: (file: File | null) => void;
 }) {
   return (
     <div className="space-y-2">
       <Label>{label}</Label>
-      <Input type="file" accept=".xlsx,.xls" onChange={(e) => onChange(e.target.files?.[0] ?? null)} />
-      {file && <p className="text-xs text-muted-foreground">{file.name}</p>}
+      <Input
+        type="file"
+        accept=".xlsx,.xls"
+        onChange={(e) => onChange(e.target.files?.[0] ?? null)}
+        aria-invalid={!!error}
+      />
+      {file && !error && <p className="text-xs text-muted-foreground">{file.name}</p>}
+      {error && <p className="text-xs text-destructive">{error}</p>}
     </div>
   );
 }
@@ -176,8 +190,20 @@ function ReportResults({ result }: { result: GenerateReportResponse }) {
 export default function Home() {
   const [salesFile, setSalesFile] = useState<File | null>(null);
   const [purchaseFile, setPurchaseFile] = useState<File | null>(null);
+  const [salesFileError, setSalesFileError] = useState<string | null>(null);
+  const [purchaseFileError, setPurchaseFileError] = useState<string | null>(null);
   const [result, setResult] = useState<GenerateReportResponse | null>(null);
   const generateReport = useGenerateReport();
+
+  const handleSalesFileChange = (file: File | null) => {
+    setSalesFile(file);
+    setSalesFileError(file ? validateReportFile(file) : null);
+  };
+
+  const handlePurchaseFileChange = (file: File | null) => {
+    setPurchaseFile(file);
+    setPurchaseFileError(file ? validateReportFile(file) : null);
+  };
 
   const {
     register,
@@ -194,8 +220,8 @@ export default function Home() {
       toast.error("Please select both the Sales and Purchase files");
       return;
     }
-    if (!hasAllowedExtension(salesFile) || !hasAllowedExtension(purchaseFile)) {
-      toast.error("Files must be .xlsx or .xls");
+    if (salesFileError || purchaseFileError) {
+      toast.error("Fix the file errors before generating the report");
       return;
     }
 
@@ -216,6 +242,8 @@ export default function Home() {
     reset();
     setSalesFile(null);
     setPurchaseFile(null);
+    setSalesFileError(null);
+    setPurchaseFileError(null);
     setResult(null);
   };
 
@@ -272,12 +300,20 @@ export default function Home() {
               </div>
 
               <div className="grid gap-4 sm:grid-cols-2">
-                <FileField label="Sales file" file={salesFile} onChange={setSalesFile} />
-                <FileField label="Purchase file" file={purchaseFile} onChange={setPurchaseFile} />
+                <FileField label="Sales file" file={salesFile} error={salesFileError} onChange={handleSalesFileChange} />
+                <FileField
+                  label="Purchase file"
+                  file={purchaseFile}
+                  error={purchaseFileError}
+                  onChange={handlePurchaseFileChange}
+                />
               </div>
 
               <div className="flex gap-2">
-                <Button type="submit" disabled={generateReport.isPending}>
+                <Button
+                  type="submit"
+                  disabled={generateReport.isPending || !!salesFileError || !!purchaseFileError}
+                >
                   {generateReport.isPending ? "Generating..." : "Generate report"}
                 </Button>
                 {result && (
