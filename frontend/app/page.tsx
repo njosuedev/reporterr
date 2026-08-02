@@ -6,6 +6,7 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 
+import { Footer } from "@/components/layout/footer";
 import { Topbar } from "@/components/layout/topbar";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -219,9 +220,9 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen">
+    <div className="flex min-h-screen flex-col">
       <Topbar />
-      <main className="mx-auto max-w-4xl space-y-6 p-6">
+      <main className="mx-auto w-full max-w-4xl flex-1 space-y-6 p-6">
         <Card>
           <CardHeader>
             <CardTitle>Generate VAT report</CardTitle>
@@ -291,6 +292,7 @@ export default function Home() {
 
         {result && <ReportResults result={result} />}
       </main>
+      <Footer />
     </div>
   );
 }
