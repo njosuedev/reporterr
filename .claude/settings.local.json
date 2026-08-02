@@ -1,0 +1,33 @@
+{
+  "permissions": {
+    "allow": [
+      "PowerShell(pip *)",
+      "PowerShell(winget install *)",
+      "PowerShell(Get-Command *)",
+      "PowerShell(Tee-Object *)",
+      "PowerShell(Start-Sleep -Seconds 4; Invoke-RestMethod -Uri \"http://127.0.0.1:8000/api/health\" -Method Get)",
+      "PowerShell(Get-Process *)",
+      "PowerShell(Test-NetConnection *)",
+      "PowerShell(cd C:\\\\Users\\\\JOSUE\\\\Documents\\\\buzis\\\\frontend; Get-ChildItem -Recurse -Directory -Depth 3 | Where-Object { $_.FullName -notmatch \"node_modules|\\\\.next\" } | Select-Object FullName)",
+      "PowerShell(Get-NetTCPConnection *)",
+      "PowerShell(Stop-Process *)",
+      "PowerShell(Invoke-WebRequest -Uri \"http://localhost:8000/api/health\" -UseBasicParsing -TimeoutSec 5 -ErrorAction SilentlyContinue)",
+      "PowerShell(Invoke-WebRequest -Uri \"http://localhost:8000/api/companies\" -UseBasicParsing -TimeoutSec 5)",
+      "PowerShell(Get-CimInstance *)",
+      "PowerShell(\\(Get-CimInstance Win32_Process -Filter \"ProcessId=16940\"\\).CommandLine)",
+      "PowerShell(npm run *)",
+      "PowerShell(Start-Sleep -Seconds 4; try { $r = Invoke-WebRequest -Uri \"http://localhost:3000\" -UseBasicParsing -TimeoutSec 15; \"STATUS: $\\($r.StatusCode\\)\"; $r.Content.Substring\\(0, [Math]::Min\\(1500, $r.Content.Length\\)\\) } catch { \"ERROR: $\\($_.Exception.Message\\)\" })",
+      "PowerShell(try { $r = Invoke-WebRequest -Uri \"http://localhost:3000\" -UseBasicParsing -TimeoutSec 10; \"STATUS: $\\($r.StatusCode\\) LEN: $\\($r.Content.Length\\)\" } catch { \"ERROR: $\\($_.Exception.Message\\)\" })",
+      "PowerShell(winget search *)",
+      "PowerShell(psql *)",
+      "PowerShell(docker --version; docker compose version; docker info --format '{{.ServerVersion}}' 2>&1 | Select-Object -First 5)",
+      "PowerShell(Start-Sleep -Seconds 2; try { Invoke-WebRequest -Uri \"http://127.0.0.1:8000/api/health\" -UseBasicParsing -TimeoutSec 5 } catch { $_.Exception.Message })",
+      "PowerShell(try { $r = Invoke-WebRequest -Uri \"http://localhost:3001\" -UseBasicParsing -TimeoutSec 10; \"STATUS: $\\($r.StatusCode\\)\"; $r.Content.Substring\\(0, [Math]::Min\\(500,$r.Content.Length\\)\\) } catch { $_.Exception.Message })",
+      "PowerShell(docker compose version *)",
+      "PowerShell(npm *)",
+      "PowerShell(try { $r = Invoke-WebRequest -Uri \"http://127.0.0.1:8000/docs\" -UseBasicParsing -TimeoutSec 5; \"Status: $\\($r.StatusCode\\)\" } catch { \"ERROR: $_\" })",
+      "PowerShell(try { $r = Invoke-WebRequest -Uri \"http://127.0.0.1:3001/\" -UseBasicParsing -TimeoutSec 10; \"Status: $\\($r.StatusCode\\), Length: $\\($r.Content.Length\\)\" } catch { \"ERROR: $_\" })",
+      "PowerShell(try { $r = Invoke-WebRequest -Uri \"http://127.0.0.1:3001/\" -UseBasicParsing -TimeoutSec 5; \"Frontend up: $\\($r.StatusCode\\)\" } catch { \"ERROR: $_\" })"
+    ]
+  }
+}
