@@ -27,7 +27,10 @@
       "PowerShell(npm *)",
       "PowerShell(try { $r = Invoke-WebRequest -Uri \"http://127.0.0.1:8000/docs\" -UseBasicParsing -TimeoutSec 5; \"Status: $\\($r.StatusCode\\)\" } catch { \"ERROR: $_\" })",
       "PowerShell(try { $r = Invoke-WebRequest -Uri \"http://127.0.0.1:3001/\" -UseBasicParsing -TimeoutSec 10; \"Status: $\\($r.StatusCode\\), Length: $\\($r.Content.Length\\)\" } catch { \"ERROR: $_\" })",
-      "PowerShell(try { $r = Invoke-WebRequest -Uri \"http://127.0.0.1:3001/\" -UseBasicParsing -TimeoutSec 5; \"Frontend up: $\\($r.StatusCode\\)\" } catch { \"ERROR: $_\" })"
+      "PowerShell(try { $r = Invoke-WebRequest -Uri \"http://127.0.0.1:3001/\" -UseBasicParsing -TimeoutSec 5; \"Frontend up: $\\($r.StatusCode\\)\" } catch { \"ERROR: $_\" })",
+      "Bash(npx tsc *)",
+      "Bash(npm run *)",
+      "Bash(.venv/Scripts/python.exe -c ' *)"
     ]
   }
 }

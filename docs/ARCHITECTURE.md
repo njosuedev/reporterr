@@ -174,10 +174,20 @@ No authentication — the endpoint is public but rate-limited
 
 ## 9. Deployment
 
-`docker-compose.yml` at the repo root defines `backend`, `frontend`, and `nginx` services
-on one bridge network, with Nginx as the single exposed port (80) reverse-proxying to
-both. **As of this writing, the `backend/Dockerfile`, `frontend/Dockerfile`, and
-`nginx/nginx.conf` it references have not been added to the repo**, so
-`docker compose up` will fail until those are created — see the root
-[README](../README.md#docker-compose-status). Until then, run the backend (Uvicorn) and
-frontend (`next dev`/`next start`) directly as described there.
+Two supported paths, both documented in the root [README](../README.md):
+
+- **Vercel** (current primary path): frontend and backend deploy as two independent
+  Vercel projects from this one repo. The backend's statelessness maps directly onto
+  Vercel's Python serverless functions — `backend/api/index.py` re-exports the FastAPI
+  ASGI `app`, and `backend/vercel.json` rewrites every request path to it so FastAPI's
+  own router (not Vercel's file-based routing) resolves `/api/...`. No disk writes happen
+  anywhere in the request path, so the read-only serverless filesystem is a non-issue;
+  the one real caveat is that `slowapi`'s in-memory rate limiter is per-instance, not
+  shared across a function's cold-started copies. See the README's
+  [Deploying to Vercel](../README.md#deploying-to-vercel) section for setup steps and
+  size/duration caveats.
+- **Docker Compose** (alternative, self-hosted): `docker-compose.yml` at the repo root
+  defines `backend`, `frontend`, and `nginx` services on one bridge network, with Nginx
+  as the single exposed port (80) reverse-proxying to both. **As of this writing, the
+  `backend/Dockerfile`, `frontend/Dockerfile`, and `nginx/nginx.conf` it references have
+  not been added to the repo**, so `docker compose up` will fail until those are created.

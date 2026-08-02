@@ -1,0 +1,9 @@
+# Local development / CI: runtime deps plus the test suite.
+# Vercel deploys only from requirements.txt — keep test-only deps out of that file
+# so the deployed serverless function stays as small as possible.
+-r requirements.txt
+
+pytest==8.3.4
+pytest-asyncio==0.25.2
+pytest-cov==6.0.0
+httpx==0.28.1

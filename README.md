@@ -45,7 +45,7 @@ parsing strategy, and VAT formulas.
 cd backend
 python -m venv .venv
 .venv\Scripts\activate        # Windows; use `source .venv/bin/activate` on macOS/Linux
-pip install -r requirements.txt
+pip install -r requirements-dev.txt   # runtime deps + test suite; use requirements.txt for runtime-only
 cp ../.env.example .env
 uvicorn app.main:app --reload
 ```
@@ -68,13 +68,62 @@ The frontend calls the backend at `NEXT_PUBLIC_API_URL` (see
 [`frontend/.env.local.example`](frontend/.env.local.example)), so make sure the backend
 is running first.
 
-## Docker Compose status
+## Deploying to Vercel
+
+Both halves of the app deploy to Vercel as **two separate projects** from this one repo
+(frontend and backend each have their own `Root Directory`, build, and env vars).
+
+### Backend (`backend/`)
+
+The FastAPI app is exposed to Vercel's Python runtime via `backend/api/index.py`
+(re-exports the ASGI `app` from `app/main.py`), with `backend/vercel.json` rewriting every
+path to that function so FastAPI's own router handles `/api/...`, `/api/docs`, etc.
+
+1. New Vercel project → import this repo → set **Root Directory** to `backend`.
+2. Framework preset: **Other**. Vercel auto-installs from `requirements.txt` (kept
+   runtime-only/lean on purpose — test deps live in `requirements-dev.txt` instead) and
+   picks up `backend/vercel.json` automatically.
+3. Set environment variables (Project Settings → Environment Variables) from
+   [`.env.example`](.env.example) — at minimum `BACKEND_CORS_ORIGINS` set to your
+   frontend's production URL (e.g. `["https://your-frontend.vercel.app"]`).
+4. Deploy. The API root becomes `https://<backend-project>.vercel.app`, with docs at
+   `/api/docs`.
+
+Known serverless caveats:
+
+- **Rate limiting** (`slowapi`, in-memory) is per-instance, not shared across a
+  serverless function's cold-started copies — treat `RATE_LIMIT_GENERATE` as
+  best-effort on Vercel, not a hard guarantee. A shared store (e.g. Upstash Redis) would
+  be needed for real cross-instance limiting.
+- **Execution time**: `maxDuration` is set to 30s in `backend/vercel.json`; Vercel caps
+  this per plan (lower it if your plan's limit is stricter). Very large Excel files could
+  approach this.
+- **Deployment size**: the function bundles pandas/reportlab and is comfortably under
+  Vercel's 250MB unzipped limit at the time of writing, but keep an eye on it if adding
+  dependencies.
+- Nothing is written to disk (reports are generated in memory), so the read-only
+  serverless filesystem is not an issue.
+
+### Frontend (`frontend/`)
+
+1. New Vercel project → import this repo → set **Root Directory** to `frontend`.
+   Framework preset **Next.js** is auto-detected.
+2. Set `NEXT_PUBLIC_API_URL` to the backend project's URL plus `/api`, e.g.
+   `https://your-backend.vercel.app/api`.
+3. Deploy. `next.config.ts` skips the Docker-only `output: "standalone"` automatically
+   when Vercel's `VERCEL` env var is present.
+
+Preview deployments get a unique, unpredictable URL per branch/PR, which won't match a
+fixed `BACKEND_CORS_ORIGINS` entry — add specific preview URLs there as needed, or point
+preview builds' `NEXT_PUBLIC_API_URL` at a non-production backend with looser CORS.
+
+## Docker Compose (alternative, self-hosted)
 
 [`docker-compose.yml`](docker-compose.yml) defines `backend`, `frontend`, and `nginx`
 services wired together on one network, but the `backend/Dockerfile`,
 `frontend/Dockerfile`, and `nginx/nginx.conf` it references have not been added to this
 repo yet — `docker compose up` will fail until those exist. Use the local development
-steps above until the container images are added.
+steps above, or the Vercel instructions above, until the container images are added.
 
 ## Environment variables
 
