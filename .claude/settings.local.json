@@ -30,7 +30,13 @@
       "PowerShell(try { $r = Invoke-WebRequest -Uri \"http://127.0.0.1:3001/\" -UseBasicParsing -TimeoutSec 5; \"Frontend up: $\\($r.StatusCode\\)\" } catch { \"ERROR: $_\" })",
       "Bash(npx tsc *)",
       "Bash(npm run *)",
-      "Bash(.venv/Scripts/python.exe -c ' *)"
+      "Bash(.venv/Scripts/python.exe -c ' *)",
+      "Bash(npm install *)",
+      "Bash(npx eslint *)",
+      "Bash(node -e \"require.resolve\\('@eslint/eslintrc'\\)\")",
+      "Bash(node *)",
+      "Bash(npm view *)",
+      "Bash(echo \"EXIT: $?\")"
     ]
   }
 }

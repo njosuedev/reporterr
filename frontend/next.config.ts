@@ -5,9 +5,6 @@ const nextConfig: NextConfig = {
   // output and doesn't need (or want) it.
   ...(process.env.VERCEL ? {} : { output: "standalone" }),
   reactStrictMode: true,
-  eslint: {
-    ignoreDuringBuilds: false,
-  },
 };
 
 export default nextConfig;
