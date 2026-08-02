@@ -177,13 +177,16 @@ No authentication — the endpoint is public but rate-limited
 Two supported paths, both documented in the root [README](../README.md):
 
 - **Vercel** (current primary path): frontend and backend deploy as two independent
-  Vercel projects from this one repo. The backend's statelessness maps directly onto
-  Vercel's Python serverless functions — `backend/api/index.py` re-exports the FastAPI
-  ASGI `app`, and `backend/vercel.json` rewrites every request path to it so FastAPI's
-  own router (not Vercel's file-based routing) resolves `/api/...`. No disk writes happen
-  anywhere in the request path, so the read-only serverless filesystem is a non-issue;
-  the one real caveat is that `slowapi`'s in-memory rate limiter is per-instance, not
-  shared across a function's cold-started copies. See the README's
+  Vercel projects from this one repo. Vercel's Python runtime auto-detects the FastAPI
+  `app` object directly from `backend/app/main.py` (a recognized entrypoint location) and
+  turns the whole app into a single Vercel Function that serves all of its own routes —
+  `backend/vercel.json` only configures `maxDuration`, no routing rules. (A prior
+  iteration added a `backend/api/index.py` wrapper plus a `rewrites` rule forwarding every
+  request to a fixed destination; that's the old, now-unsupported Python deployment
+  pattern and broke every route — see the README's Vercel section for why.) No disk
+  writes happen anywhere in the request path, so the read-only serverless filesystem is a
+  non-issue; the one real caveat is that `slowapi`'s in-memory rate limiter is
+  per-instance, not shared across a function's cold-started copies. See the README's
   [Deploying to Vercel](../README.md#deploying-to-vercel) section for setup steps and
   size/duration caveats.
 - **Docker Compose** (alternative, self-hosted): `docker-compose.yml` at the repo root

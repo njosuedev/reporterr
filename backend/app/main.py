@@ -61,3 +61,12 @@ async def unhandled_exception_handler(request: Request, exc: Exception) -> JSONR
 
 
 app.include_router(api_router, prefix=settings.API_V1_PREFIX)
+
+
+@app.get("/")
+async def root() -> dict[str, str]:
+    return {
+        "service": settings.PROJECT_NAME,
+        "health": f"{settings.API_V1_PREFIX}/health",
+        "docs": f"{settings.API_V1_PREFIX}/docs",
+    }

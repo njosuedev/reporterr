@@ -75,19 +75,30 @@ Both halves of the app deploy to Vercel as **two separate projects** from this o
 
 ### Backend (`backend/`)
 
-The FastAPI app is exposed to Vercel's Python runtime via `backend/api/index.py`
-(re-exports the ASGI `app` from `app/main.py`), with `backend/vercel.json` rewriting every
-path to that function so FastAPI's own router handles `/api/...`, `/api/docs`, etc.
+Vercel's Python runtime auto-detects a FastAPI `app` at a supported entrypoint —
+`app/main.py` matches out of the box (`main.py` inside an `app/` directory is one of the
+recognized locations) — and turns the whole app into a single Vercel Function that
+serves all of its own routes directly. **No `rewrites`/`routes` config is needed or
+wanted**: `backend/vercel.json` only sets `functions["app/main.py"].maxDuration`. (An
+earlier version of this setup added a `backend/api/index.py` wrapper plus a
+`rewrites: [{ source: "/(.*)", destination: "/api/index" }]` rule — the old,
+now-unsupported Python deployment pattern. That rewrite forwarded every request through
+a fixed destination instead of Vercel's native full-app routing, so every path, including
+real ones like `/api/reports/generate`, came back as a generic FastAPI
+`{"detail":"Not Found"}`. Don't reintroduce it.)
 
 1. New Vercel project → import this repo → set **Root Directory** to `backend`.
-2. Framework preset: **Other**. Vercel auto-installs from `requirements.txt` (kept
-   runtime-only/lean on purpose — test deps live in `requirements-dev.txt` instead) and
-   picks up `backend/vercel.json` automatically.
+2. Framework preset: **FastAPI** (or **Other** — either auto-installs from
+   `requirements.txt`, kept runtime-only/lean on purpose since test deps live in
+   `requirements-dev.txt` instead) and picks up `backend/vercel.json` automatically.
 3. Set environment variables (Project Settings → Environment Variables) from
    [`.env.example`](.env.example) — at minimum `BACKEND_CORS_ORIGINS` set to your
-   frontend's production URL (e.g. `["https://your-frontend.vercel.app"]`).
-4. Deploy. The API root becomes `https://<backend-project>.vercel.app`, with docs at
-   `/api/docs`.
+   frontend's production URL (e.g. `https://your-frontend.vercel.app`, comma-separated if
+   more than one).
+4. Deploy. The API root becomes `https://<backend-project>.vercel.app`, which returns a
+   small landing JSON pointing at `/api/health` and `/api/docs` — every real endpoint
+   lives under the `/api` prefix (`/api/health`, `POST /api/reports/generate`,
+   `/api/docs`, `/api/openapi.json`), matching the [API section](#api) above.
 
 Known serverless caveats:
 

@@ -37,7 +37,9 @@
       "Bash(node *)",
       "Bash(npm view *)",
       "Bash(echo \"EXIT: $?\")",
-      "Bash(git fetch *)"
+      "Bash(git fetch *)",
+      "WebSearch",
+      "Bash(.venv/Scripts/python.exe -m pytest --no-header -q)"
     ]
   }
 }
