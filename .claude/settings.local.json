@@ -36,7 +36,8 @@
       "Bash(node -e \"require.resolve\\('@eslint/eslintrc'\\)\")",
       "Bash(node *)",
       "Bash(npm view *)",
-      "Bash(echo \"EXIT: $?\")"
+      "Bash(echo \"EXIT: $?\")",
+      "Bash(git fetch *)"
     ]
   }
 }
