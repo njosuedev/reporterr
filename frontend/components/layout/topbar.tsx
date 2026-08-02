@@ -24,8 +24,8 @@ export function Topbar() {
             <Receipt className="h-5 w-5" />
           </span>
           <div>
-            <p className="text-lg font-bold leading-tight">Reporterr Generator</p>
-            <p className="text-xs text-primary-foreground/75">Rwanda EBM VAT Reports</p>
+            <p className="text-lg font-bold leading-tight">Reports Generator</p>
+            <p className="text-xs text-primary-foreground/75">Business Reports - A&amp;T Consultants Ltd</p>
           </div>
         </div>
         <Button
