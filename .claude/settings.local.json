@@ -49,7 +49,12 @@
       "Bash(where.exe python *)",
       "Bash(where.exe py *)",
       "Bash(py --version)",
-      "Bash(./.venv/Scripts/python.exe -c ' *)"
+      "Bash(./.venv/Scripts/python.exe -c ' *)",
+      "Bash(./.venv/Scripts/python.exe -m pytest app/tests -q)",
+      "Bash(git add *)",
+      "Bash(git commit -m ' *)",
+      "Bash(git push *)",
+      "Bash(git restore *)"
     ]
   }
 }
