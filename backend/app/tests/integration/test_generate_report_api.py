@@ -80,7 +80,7 @@ async def test_generate_report_returns_calculated_figures_pdf_and_text(client: A
     assert body["tin"] == "123456789"
     assert body["period_start"] == "2026-01-01"
     assert body["period_end"] == "2026-01-31"
-    assert body["total_taxable_sales"] == pytest.approx(400_000, abs=0.01)
+    assert body["total_taxable_sales"] == pytest.approx(472_000, abs=0.01)
     assert body["output_vat"] == pytest.approx(72_000, abs=0.01)
     assert body["total_taxable_purchases"] == pytest.approx(354_000, abs=0.01)
     assert body["input_vat"] == pytest.approx(54_000, abs=0.01)

@@ -48,6 +48,10 @@ _COLUMN_ALIASES: dict[str, list[str]] = {
         "total amount", "gross amount", "total", "amount incl vat", "amount incl. vat",
         "total incl tax", "total incl. vat", "invoice total", "grand total",
     ],
+    "exempted_amount": [
+        "exempted sales amount", "exempted amount", "exempted sales", "amount exempted",
+        "vat exempted amount", "exempted",
+    ],
 }
 
 _MANDATORY_FIELDS = ("taxable_amount", "vat_amount")
@@ -89,6 +93,7 @@ class ParsedRow:
     taxable_amount: float
     vat_amount: float
     total_amount: float
+    exempted_amount: float
     raw_row: dict[str, Any]
 
 
@@ -108,6 +113,16 @@ class ParsedUpload:
     @property
     def total_vat_amount(self) -> float:
         return sum(r.vat_amount for r in self.rows)
+
+    @property
+    def total_exempted_amount(self) -> float:
+        return sum(r.exempted_amount for r in self.rows)
+
+    @property
+    def total_reported_taxable_amount(self) -> float:
+        """VAT-inclusive taxable total, excluding exempted sales/purchases —
+        the figure used in the client-facing report (net taxable + VAT)."""
+        return self.total_taxable_amount - self.total_exempted_amount + self.total_vat_amount
 
 
 def _normalize(text: Any) -> str:
@@ -284,6 +299,7 @@ class ExcelParserService:
             vat_amount = self._to_float(vat_raw)
             total_raw = get("total_amount")
             total_amount = self._to_float(total_raw) if total_raw is not None else round(taxable_amount + vat_amount, 2)
+            exempted_amount = self._to_float(get("exempted_amount"))
 
             invoice_date_raw = get("invoice_date")
             invoice_date = self._to_date(invoice_date_raw)
@@ -302,6 +318,7 @@ class ExcelParserService:
                     taxable_amount=taxable_amount,
                     vat_amount=vat_amount,
                     total_amount=total_amount,
+                    exempted_amount=exempted_amount,
                     raw_row={str(k): (None if pd.isna(v) else str(v)) for k, v in zip(data_df.columns, values)},
                 )
             )
