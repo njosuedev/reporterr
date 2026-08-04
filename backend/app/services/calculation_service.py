@@ -36,23 +36,27 @@ class CalculationService:
         input_vat: float,
         previous_remaining_refund: float = 0.0,
     ) -> VatCalculationResult:
-        total_taxable_sales = round(total_taxable_sales, 2)
-        output_vat = round(output_vat, 2)
-        total_taxable_purchases = round(total_taxable_purchases, 2)
-        input_vat = round(input_vat, 2)
+        # RWF has no subunits in these reports, so round to whole Frw immediately —
+        # matching how the figures are rounded by hand — rather than carrying cents
+        # through the refund/payable math and only rounding at the end.
+        total_taxable_sales = round(total_taxable_sales)
+        output_vat = round(output_vat)
+        total_taxable_purchases = round(total_taxable_purchases)
+        input_vat = round(input_vat)
+        previous_remaining_refund = round(previous_remaining_refund)
 
-        vat_difference = round(output_vat - input_vat, 2)
+        vat_difference = output_vat - input_vat
 
         if vat_difference >= 0:
             vat_payable = vat_difference
             refund = 0.0
         else:
             vat_payable = 0.0
-            refund = round(abs(vat_difference), 2)
+            refund = abs(vat_difference)
 
         # Current-period refund plus any carried-forward refund not yet absorbed
         # by this period's VAT payable.
-        remaining_refund = round(refund + max(previous_remaining_refund - vat_payable, 0.0), 2)
+        remaining_refund = round(refund + max(previous_remaining_refund - vat_payable, 0.0))
 
         # A taxpayer with no VAT on sales isn't VAT-registered on the output side,
         # so they cannot claim a refund against input VAT paid on purchases —
@@ -66,13 +70,13 @@ class CalculationService:
         # that much VAT, and the gross/invoice sales total is base + VAT, i.e.
         # base * (1 + vat_rate) — e.g. remaining_refund * 118/18 at an 18% rate.
         required_sales_to_clear_refund = (
-            round(remaining_refund * (1 + self.vat_rate) / self.vat_rate, 2) if remaining_refund > 0 else 0.0
+            round(remaining_refund * (1 + self.vat_rate) / self.vat_rate) if remaining_refund > 0 else 0.0
         )
 
         # Purchases needed (VAT-inclusive) to generate enough input VAT to offset
         # the VAT payable, using the same base-to-gross conversion as above.
         required_purchases_to_clear_vat_payable = (
-            round(vat_payable * (1 + self.vat_rate) / self.vat_rate, 2) if vat_payable > 0 else 0.0
+            round(vat_payable * (1 + self.vat_rate) / self.vat_rate) if vat_payable > 0 else 0.0
         )
 
         return VatCalculationResult(
