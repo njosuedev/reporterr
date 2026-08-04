@@ -69,7 +69,9 @@ async def generate_report(
     result = calculator.calculate(
         total_taxable_sales=sales_parsed.total_taxable_amount,
         output_vat=sales_parsed.total_vat_amount,
-        total_taxable_purchases=purchase_parsed.total_taxable_amount,
+        # Reported purchases are the VAT-inclusive total (net + VAT), unlike sales
+        # which are reported net-of-VAT — this matches the client-facing report format.
+        total_taxable_purchases=purchase_parsed.total_taxable_amount + purchase_parsed.total_vat_amount,
         input_vat=purchase_parsed.total_vat_amount,
         previous_remaining_refund=previous_remaining_refund,
     )
