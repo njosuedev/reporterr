@@ -20,3 +20,4 @@ reportlab==4.2.5
 # ── Utilities ──────────────────────────────────────────────
 python-dotenv==1.0.1
 structlog==24.4.0
+tzdata==2025.2

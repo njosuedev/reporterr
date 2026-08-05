@@ -2,6 +2,7 @@
 VAT report back (figures + WhatsApp text + PDF). Nothing is persisted anywhere."""
 import base64
 from datetime import date, datetime
+from zoneinfo import ZoneInfo
 
 from fastapi import APIRouter, File, Form, Request, UploadFile
 
@@ -90,7 +91,7 @@ async def generate_report(
         remaining_refund=result.remaining_refund,
         required_sales_to_clear_refund=result.required_sales_to_clear_refund,
         required_purchases_to_clear_vat_payable=result.required_purchases_to_clear_vat_payable,
-        created_at=datetime.now(),
+        created_at=datetime.now(ZoneInfo(settings.TZ)),
     )
 
     whatsapp_text = _text_service.build(report, company)
