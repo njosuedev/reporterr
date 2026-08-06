@@ -54,9 +54,7 @@
       "Bash(git add *)",
       "Bash(git commit -m ' *)",
       "Bash(git push *)",
-      "Bash(git restore *)",
-      "PowerShell(\\(Set-ExecutionPolicy -Scope Process -ExecutionPolicy RemoteSigned\\) ; \\(& c:\\\\Users\\\\JOSUE\\\\Documents\\\\package\\\\buzis\\\\backend\\\\.venv\\\\Scripts\\\\Activate.ps1\\))",
-      "PowerShell(python -c \"from zoneinfo import ZoneInfo; from datetime import datetime; print\\(datetime.now\\(ZoneInfo\\('Africa/Kigali'\\)\\)\\)\")"
+      "Bash(git restore *)"
     ]
   }
 }
