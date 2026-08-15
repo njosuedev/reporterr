@@ -1,4 +1,4 @@
-# VAT Report Analyzer Rwanda.
+# VAT Report Analyzer Rwanda
 
 A stateless tool that ingests Rwanda EBM (Electronic Billing Machine) Sales and Purchase
 Excel exports and generates an accountant-ready VAT analysis report — figures, a
